@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Halaman Tidak Ditemukan | Koperasi Marunda Center</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2f00ff',
+                        secondary: '#f2f2f2',
+                        darkNeutral: '#110f1a',
+                        lightNeutral: '#f4f3f6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #f4f3f6;
+            --surface-color: #ffffff;
+            --text-color: #110f1a;
+            --text-muted: #5a5766;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+        [data-theme="dark"] {
+            --bg-color: #110f1a;
+            --surface-color: #1a1726;
+            --text-color: #f4f3f6;
+            --text-muted: #aba8ba;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col items-center justify-center p-6 text-center">
+
+    <div class="max-w-md mx-auto space-y-6">
+        <div class="w-24 h-24 rounded-3xl bg-primary/10 text-primary flex items-center justify-center mx-auto text-4xl shadow-xl">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h1 class="text-6xl font-extrabold tracking-tight text-primary">404</h1>
+        <h2 class="text-2xl font-bold">Halaman Tidak Ditemukan</h2>
+        <p class="text-[var(--text-muted)] text-sm">
+            Maaf, halaman atau artikel yang Anda cari di Koperasi Kelurahan Marunda Center mungkin telah dipindahkan atau tidak tersedia.
+        </p>
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href="index.html" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all shadow-lg">
+                <i class="fa-solid fa-house mr-2"></i> Kembali ke Beranda
+            </a>
+            <a href="index.html" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-[var(--border-color)] font-semibold text-sm hover:border-primary transition-all">
+                <i class="fa-solid fa-store mr-2"></i> Lihat Katalog
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koperasi Kelurahan Marunda Center | Berita, Wawasan & Katalog Produk</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: ['class', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2f00ff',
+                        'primary-dark': '#1e00aa',
+                        secondary: '#f2f2f2',
+                        tertiary: '#000000',
+                        darkNeutral: '#110f1a',
+                        lightNeutral: '#f4f3f6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Three.js for 3D Cinematic Hero -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Lenis for Smooth Scrolling -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #f4f3f6;
+            --surface-color: #ffffff;
+            --text-color: #110f1a;
+            --text-muted: #5a5766;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: #ffffff;
+            --accent-glow: rgba(47, 0, 255, 0.15);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #110f1a;
+            --surface-color: #1a1726;
+            --text-color: #f4f3f6;
+            --text-muted: #aba8ba;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-bg: #1a1726;
+            --accent-glow: rgba(47, 0, 255, 0.35);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .glass-nav {
+            background-color: var(--surface-color);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-custom {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px var(--accent-glow);
+        }
+
+        .article-measure {
+            max-width: 68ch;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #webgl-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2f00ff;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary selection:text-white">
+
+    <header class="fixed top-0 left-0 right-0 z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="router.navigate('home')">
+                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    KM
+                </div>
+                <div>
+                    <span class="font-bold text-lg tracking-tight block leading-none">Koperasi Marunda</span>
+                    <span class="text-xs text-primary font-medium tracking-widest uppercase">Center</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <button onclick="router.navigate('home')" class="hover:text-primary transition-colors">Beranda</button>
+                <button onclick="router.navigate('blog')" class="hover:text-primary transition-colors">Artikel & Berita</button>
+                <button onclick="router.navigate('catalog')" class="hover:text-primary transition-colors">Katalog Produk</button>
+                <button onclick="router.navigate('about')" class="hover:text-primary transition-colors">Tentang Kami</button>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <!-- Theme Toggle Button -->
+                <button id="themeToggle" aria-label="Toggle Theme" class="w-10 h-10 rounded-full flex items-center justify-center border border-[var(--border-color)] bg-[var(--surface-color)] hover:border-primary transition-all">
+                    <i class="fa-solid fa-moon dark:hidden text-gray-800"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+                </button>
+
+                <!-- Admin Dashboard Trigger -->
+                <button onclick="openAdminModal()" class="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-primary text-white font-medium text-sm hover:bg-primary-dark transition-colors shadow-md">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Admin Panel</span>
+                </button>
+
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="md:hidden w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--border-color)]">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden px-6 py-4 glass-nav border-t border-[var(--border-color)] space-y-3">
+            <button onclick="router.navigate('home'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium">Beranda</button>
+            <button onclick="router.navigate('blog'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium">Artikel & Berita</button>
+            <button onclick="router.navigate('catalog'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium">Katalog Produk</button>
+            <button onclick="router.navigate('about'); toggleMobileMenu();" class="block w-full text-left py-2 font-medium">Tentang Kami</button>
+            <button onclick="openAdminModal(); toggleMobileMenu();" class="block w-full text-left py-2 font-medium text-primary">Admin Panel</button>
+        </div>
+    </header>
+
+    <main id="app" class="pt-20">
+        <!-- Views will be dynamically injected here -->
+    </main>
+
+    <div id="adminModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="card-custom w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+            <div class="px-6 py-4 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--surface-color)]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Admin Management - Koperasi Marunda</h3>
+                </div>
+                <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-500/20">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="flex border-b border-[var(--border-color)] px-6 bg-[var(--surface-color)] space-x-6 text-sm font-medium">
+                <button onclick="switchAdminTab('posts')" id="tabPostsBtn" class="py-3 border-b-2 border-primary text-primary">Kelola Artikel</button>
+                <button onclick="switchAdminTab('products')" id="tabProductsBtn" class="py-3 border-b-2 border-transparent text-[var(--text-muted)]">Kelola Produk</button>
+                <button onclick="switchAdminTab('createPost')" id="tabCreatePostBtn" class="py-3 border-b-2 border-transparent text-[var(--text-muted)]">+ Tulis Artikel Baru</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-1 space-y-6">
+                <!-- Posts Tab -->
+                <div id="adminPostsView" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-semibold text-base">Daftar Artikel & Berita</h4>
+                        <button onclick="switchAdminTab('createPost')" class="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-medium">Buat Baru</button>
+                    </div>
+                    <div id="adminPostsList" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Products Tab -->
+                <div id="adminProductsView" class="hidden space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-semibold text-base">Katalog Produk Koperasi</h4>
+                        <button onclick="openProductModal()" class="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-medium">+ Tambah Produk</button>
+                    </div>
+                    <div id="adminProductsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Create/Edit Post Tab -->
+                <div id="adminCreatePostView" class="hidden space-y-4">
+                    <h4 class="font-semibold text-base" id="postFormTitle">Tulis Artikel / Berita Baru</h4>
+                    <form id="postForm" onsubmit="handlePostSubmit(event)" class="space-y-4">
+                        <input type="hidden" id="editPostId">
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider mb-1">Judul Artikel</label>
+                            <input type="text" id="postTitleInput" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] focus:border-primary outline-none">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium uppercase tracking-wider mb-1">Kategori</label>
+                                <select id="postCategoryInput" class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] focus:border-primary outline-none">
+                                    <option value="Berita Koperasi">Berita Koperasi</option>
+                                    <option value="UMKM & Wirausaha">UMKM & Wirausaha</option>
+                                    <option value="Pemberdayaan Warga">Pemberdayaan Warga</option>
+                                    <option value="Teknologi & Digital">Teknologi & Digital</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium uppercase tracking-wider mb-1">Status Publikasi</label>
+                                <select id="postStatusInput" class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] focus:border-primary outline-none">
+                                    <option value="Published">Publish Langsung</option>
+                                    <option value="Draft">Simpan Draft</option>
+                                    <option value="Scheduled">Jadwalkan Terbit</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider mb-1">URL Gambar Utama</label>
+                            <input type="url" id="postImageInput" placeholder="https://images.unsplash.com/..." required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] focus:border-primary outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider mb-1">Ringkasan Singkat (Excerpt)</label>
+                            <textarea id="postExcerptInput" rows="2" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] focus:border-primary outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium uppercase tracking-wider mb-1">Konten Lengkap (mendukung Markdown / HTML sederhana)</label>
+                            <textarea id="postContentInput" rows="6" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] focus:border-primary outline-none"></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-2">
+                            <button type="button" onclick="switchAdminTab('posts')" class="px-5 py-2.5 rounded-xl border border-[var(--border-color)] text-sm font-medium">Batal</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-dark transition-colors">Simpan Artikel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Add/Edit Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="card-custom w-full max-w-lg rounded-2xl overflow-hidden flex flex-col shadow-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
+                <h3 class="font-bold text-lg">Tambah / Edit Produk Koperasi</h3>
+                <button onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="productForm" onsubmit="handleProductSubmit(event)" class="space-y-4">
+                <input type="hidden" id="editProductId">
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider mb-1">Nama Produk</label>
+                    <input type="text" id="prodNameInput" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider mb-1">Harga (Rp)</label>
+                        <input type="number" id="prodPriceInput" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider mb-1">Kategori</label>
+                        <input type="text" id="prodCategoryInput" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] outline-none" placeholder="Sembako / Kerajinan / Jasa">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider mb-1">URL Gambar</label>
+                    <input type="url" id="prodImageInput" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider mb-1">Deskripsi Produk</label>
+                    <textarea id="prodDescInput" rows="3" required class="w-full px-4 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-color)] outline-none"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl border border-[var(--border-color)]">Batal</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-primary text-white">Simpan Produk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scroll initialization with Lenis
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            smooth: true,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Mock Database (State)
+        let state = {
+            theme: localStorage.getItem('theme') || 'dark',
+            currentRoute: 'home',
+            currentParams: null,
+            searchQuery: '',
+            selectedCategory: 'All',
+            posts: [
+                {
+                    id: 1,
+                    title: "Peresmian Program Digitalisasi Warung Warga Marunda Center 2026",
+                    slug: "digitalisasi-warung-warga-marunda-2026",
+                    category: "Teknologi & Digital",
+                    excerpt: "Koperasi Kelurahan Marunda Center meluncurkan aplikasi kasir digital dan QRIS massal untuk seluruh warung kelontong anggota.",
+                    content: `Koperasi Kelurahan Marunda Center dengan bangga mengumumkan peluncuran program 'Digitalisasi Warung Warga' yang dirancang khusus untuk meningkatkan daya saing UMKM lokal di era modern. Dalam program ini, setiap anggota koperasi pemilik warung kelontong akan mendapatkan pendampingan penggunaan sistem pencatatan keuangan berbasis cloud, integrasi pembayaran QRIS, serta akses modal mikro berbunga rendah.\n\nKetua Koperasi Marunda Center menyampaikan bahwa transformasi digital bukan lagi pilihan, melainkan keharusan. "Dengan sistem yang terintegrasi, efisiensi operasional warung meningkat hingga 40% dan memudahkan akses terhadap pasokan barang grosir langsung dari pusat koperasi," ujarnya.\n\nProgram ini menargetkan lebih dari 150 warung di kawasan Kelurahan Marunda hingga akhir kuartal ketiga tahun 2026. Mari dukung terus produk dan warung tetangga kita!`,
+                    author: {
+                        name: "Budi Santoso, S.E.",
+                        role: "Ketua Pengurus Koperasi",
+                        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+                    },
+                    publishedAt: "12 Okt 2026",
+                    updatedAt: "14 Okt 2026",
+                    readTime: "4 min read",
+                    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&auto=format&fit=crop&q=80",
+                    status: "Published"
+                },
+                {
+                    id: 2,
+                    title: "Pelatihan Keterampilan Pengolahan Limbah Kreatif untuk Pemuda Karang Taruna",
+                    slug: "pelatihan-limbah-kreatif-karang-taruna",
+                    category: "Pemberdayaan Warga",
+                    excerpt: "Mengubah barang bekas bernilai rendah menjadi produk kerajinan tangan bernilai ekspor hasil kolaborasi Koperasi dan Karang Taruna.",
+                    content: `Bertempat di Balai Warga Marunda Center, Koperasi bersama Karang Taruna setempat mengadakan workshop intensif selama tiga hari mengenai teknik daur ulang dan desain produk kerajinan tangan.\n\nKegiatan ini menghadirkan praktisi desain ramah lingkungan yang mengajarkan cara mengolah botol plastik, kain perca, dan kardus bekas menjadi dekorasi rumah serta tas modis yang bernilai jual tinggi. Seluruh hasil karya terbaik akan dipasarkan melalui Katalog Resmi Koperasi Marunda Center dan dipamerkan pada event bazar tingkat kota mendatang.`,
+                    author: {
+                        name: "Siti Rahmawati, M.Pd.",
+                        role: "Divisi Pemberdayaan Anggota",
+                        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80"
+                    },
+                    publishedAt: "08 Okt 2026",
+                    updatedAt: "08 Okt 2026",
+                    readTime: "3 min read",
+                    image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80",
+                    status: "Published"
+                },
+                {
+                    id: 3,
+                    title: "Laporan Tahunan Koperasi Marunda Center: Pertumbuhan SHU Meningkat 25%",
+                    slug: "laporan-tahunan-koperasi-marunda-center-2026",
+                    category: "Berita Koperasi",
+                    excerpt: "Rapat Anggota Tahunan (RAT) mencatatkan rekor surplus usaha tertinggi sepanjang sejarah pendirian koperasi.",
+                    content: `Koperasi Kelurahan Marunda Center sukses menyelenggarakan Rapat Anggota Tahunan (RAT) Tahun Buku 2025 dengan mencatatkan pencapaian luar biasa. Sisa Hasil Usaha (SHU) mengalami lonjakan sebesar 25% dibanding tahun sebelumnya.\n\nKeberhasilan ini didorong oleh ekspansi unit usaha simpan pinjam yang sehat, unit grosir sembako murah, serta suksesnya unit layanan logistik kelurahan. Pengurus berkomitmen untuk terus transparan dan meningkatkan deviden serta kesejahteraan seluruh anggota aktif.`,
+                    author: {
+                        name: "Ahmad Fauzi, Ak.",
+                        role: "Kepala Badan Pengawas",
+                        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+                    },
+                    publishedAt: "01 Okt 2026",
+                    updatedAt: "02 Okt 2026",
+                    readTime: "5 min read",
+                    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop&q=80",
+                    status: "Published"
+                }
+            ],
+            products: [
+                {
+                    id: 1,
+                    name: "Beras Organik Sejahtera 5kg",
+                    category: "Sembako",
+                    price: 68000,
+                    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=80",
+                    description: "Beras pilihan kualitas premium hasil petani binaan koperasi, pulen dan tanpa pemutih buatan."
+                },
+                {
+                    id: 2,
+                    name: "Minyak Goreng Sawit Murni 2L",
+                    category: "Sembako",
+                    price: 34000,
+                    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&auto=format&fit=crop&q=80",
+                    description: "Minyak goreng jernih kaya vitamin A untuk kebutuhan memasak harga khusus anggota."
+                },
+                {
+                    id: 3,
+                    name: "Tas Daur Ulang Kain Perca Eksklusif",
+                    category: "Kerajinan",
+                    price: 45000,
+                    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80",
+                    description: "Tas ramah lingkungan hasil karya pemuda Karang Taruna Marunda Center."
+                },
+                {
+                    id: 4,
+                    name: "Paket Sembako Hemat Bulanan",
+                    category: "Paket Khusus",
+                    price: 150000,
+                    image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=600&auto=format&fit=crop&q=80",
+                    description: "Terdiri dari beras 5kg, minyak 2L, gula pasir 1kg, dan teh celup pilihan."
+                }
+            ]
+        };
+
+        // Theme Initialization & Toggle
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('themeToggle');
+
+        function setTheme(theme) {
+            state.theme = theme;
+            htmlEl.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            setTheme(state.theme === 'dark' ? 'light' : 'dark');
+        });
+
+        setTheme(state.theme);
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        // Router System
+        const router = {
+            navigate: (view, params = null) => {
+                state.currentRoute = view;
+                state.currentParams = params;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                renderView();
+            }
+        };
+
+        function renderView() {
+            const app = document.getElementById('app');
+            app.innerHTML = '';
+
+            if (state.currentRoute === 'home') {
+                app.innerHTML = renderHomeView();
+                initThreeHero();
+            } else if (state.currentRoute === 'blog') {
+                app.innerHTML = renderBlogView();
+            } else if (state.currentRoute === 'catalog') {
+                app.innerHTML = renderCatalogView();
+            } else if (state.currentRoute === 'postDetail') {
+                app.innerHTML = renderPostDetailView(state.currentParams);
+            } else if (state.currentRoute === 'about') {
+                app.innerHTML = renderAboutView();
+            }
+            
+            // Re-trigger scroll trigger animations
+            if (typeof ScrollTrigger !== 'undefined') {
+                ScrollTrigger.refresh();
+            }
+        }
+
+        // --- HOME VIEW ---
+        function renderHomeView() {
+            const recentPosts = state.posts.filter(p => p.status === 'Published').slice(0, 3);
+            const featuredProducts = state.products.slice(0, 3);
+
+            return `
+                <!-- Hero Section with Three.js Background -->
+                <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8">
+                    <div id="webgl-container"></div>
+                    <div class="hero-content max-w-5xl mx-auto text-center space-y-8 py-20">
+                        <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--surface-color)] backdrop-blur-md shadow-sm">
+                            <span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
+                            <span class="text-xs font-semibold uppercase tracking-wider">Koperasi Resmi Kelurahan Marunda Center</span>
+                        </div>
+                        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+                            Membangun Ekonomi Bersama, <span class="text-primary">Sejahtera Bersama.</span>
+                        </h1>
+                        <p class="text-lg sm:text-xl text-[var(--text-muted)] max-w-2xl mx-auto font-normal">
+                            Pusat informasi berita terkini, wawasan pemberdayaan warga, serta katalog produk unggulan UMKM binaan Koperasi Marunda Center.
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                            <button onclick="router.navigate('blog')" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-primary text-white font-semibold text-base hover:bg-primary-dark transition-all shadow-xl shadow-primary/20 flex items-center justify-center space-x-2">
+                                <span>Jelajahi Artikel</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </button>
+                            <button onclick="router.navigate('catalog')" class="w-full sm:w-auto px-8 py-4 rounded-2xl border border-[var(--border-color)] bg-[var(--surface-color)] font-semibold text-base hover:border-primary transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-store text-primary"></i>
+                                <span>Lihat Katalog Produk</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Latest Articles Section -->
+                <section class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                        <div>
+                            <span class="text-primary font-bold text-xs uppercase tracking-widest block mb-2">Wawasan & Berita</span>
+                            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Artikel & Pengumuman Terbaru</h2>
+                        </div>
+                        <button onclick="router.navigate('blog')" class="mt-4 md:mt-0 text-sm font-semibold text-primary hover:underline flex items-center space-x-2">
+                            <span>Lihat Semua Artikel</span>
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        ${recentPosts.map(post => `
+                            <article onclick="router.navigate('postDetail', ${post.id})" class="card-custom rounded-3xl overflow-hidden cursor-pointer flex flex-col group">
+                                <div class="relative h-56 overflow-hidden">
+                                    <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                    <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-medium">
+                                        ${post.category}
+                                    </span>
+                                </div>
+                                <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <div class="flex items-center space-x-3 text-xs text-[var(--text-muted)] mb-2">
+                                            <span><i class="fa-regular fa-calendar mr-1"></i> ${post.publishedAt}</span>
+                                            <span>•</span>
+                                            <span><i class="fa-regular fa-clock mr-1"></i> ${post.readTime}</span>
+                                        </div>
+                                        <h3 class="font-bold text-xl line-clamp-2 group-hover:text-primary transition-colors">
+                                            ${post.title}
+                                        </h3>
+                                        <p class="text-[var(--text-muted)] text-sm line-clamp-3 mt-2">
+                                            ${post.excerpt}
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center space-x-3 pt-4 border-t border-[var(--border-color)]">
+                                        <img src="${post.author.avatar}" alt="${post.author.name}" class="w-9 h-9 rounded-full object-cover">
+                                        <div>
+                                            <span class="block text-xs font-bold leading-none">${post.author.name}</span>
+                                            <span class="text-[10px] text-[var(--text-muted)] mt-0.5 block">${post.author.role}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <!-- Featured Products Preview -->
+                <section class="py-20 bg-[var(--surface-color)] border-y border-[var(--border-color)]">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                            <div>
+                                <span class="text-primary font-bold text-xs uppercase tracking-widest block mb-2">Katalog Unggulan</span>
+                                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Produk Koperasi & UMKM Pilihan</h2>
+                            </div>
+                            <button onclick="router.navigate('catalog')" class="mt-4 md:mt-0 text-sm font-semibold text-primary hover:underline flex items-center space-x-2">
+                                <span>Buka Katalog Lengkap</span>
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            ${featuredProducts.map(prod => `
+                                <div class="card-custom rounded-2xl overflow-hidden flex flex-col group">
+                                    <div class="relative h-48 overflow-hidden bg-gray-100">
+                                        <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                        <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-primary text-white text-[10px] font-bold uppercase">
+                                            ${prod.category}
+                                        </span>
+                                    </div>
+                                    <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+                                        <div>
+                                            <h4 class="font-bold text-base line-clamp-1">${prod.name}</h4>
+                                            <p class="text-xs text-[var(--text-muted)] line-clamp-2 mt-1">${prod.description}</p>
+                                        </div>
+                                        <div class="flex items-center justify-between pt-3 border-t border-[var(--border-color)]">
+                                            <span class="font-extrabold text-primary text-base">Rp ${prod.price.toLocaleString('id-ID')}</span>
+                                            <button onclick="orderProduct('${prod.name}')" class="px-3 py-1.5 rounded-xl bg-primary/10 text-primary text-xs font-semibold hover:bg-primary hover:text-white transition-colors">
+                                                Pesan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                ${renderFooter()}
+            `;
+        }
+
+        // --- BLOG VIEW ---
+        function renderBlogView() {
+            const categories = ['All', 'Berita Koperasi', 'UMKM & Wirausaha', 'Pemberdayaan Warga', 'Teknologi & Digital'];
+            
+            const filteredPosts = state.posts.filter(p => {
+                if (p.status !== 'Published') return false;
+                const matchesCategory = state.selectedCategory === 'All' || p.category === state.selectedCategory;
+                const matchesSearch = p.title.toLowerCase().includes(state.searchQuery.toLowerCase()) || p.excerpt.toLowerCase().includes(state.searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+                        <span class="text-primary font-bold text-xs uppercase tracking-widest">Pusat Informasi Warga</span>
+                        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">Artikel, Berita & Wawasan</h1>
+                        <p class="text-[var(--text-muted)] text-base">Temukan informasi seputar kegiatan koperasi, pelatihan UMKM, dan pengumuman penting Kelurahan Marunda Center.</p>
+                        
+                        <!-- Search Bar -->
+                        <div class="relative max-w-xl mx-auto pt-4">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
+                            <input type="text" id="searchInput" value="${state.searchQuery}" oninput="handleSearchInput(event)" placeholder="Cari judul artikel atau topik..." class="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-primary outline-none text-sm shadow-sm">
+                        </div>
+
+                        <!-- Categories Filter Tabs -->
+                        <div class="flex flex-wrap items-center justify-center gap-2 pt-4">
+                            ${categories.map(cat => `
+                                <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all ${state.selectedCategory === cat ? 'bg-primary text-white shadow-md' : 'border border-[var(--border-color)] bg-[var(--surface-color)] hover:border-primary'}">
+                                    ${cat}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Posts Grid -->
+                    ${filteredPosts.length === 0 ? `
+                        <div class="text-center py-20 card-custom rounded-3xl p-12">
+                            <div class="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 text-2xl">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">Artikel tidak ditemukan</h3>
+                            <p class="text-[var(--text-muted)] text-sm">Coba kata kunci lain atau pilih kategori yang berbeda.</p>
+                        </div>
+                    ` : `
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            ${filteredPosts.map(post => `
+                                <article onclick="router.navigate('postDetail', ${post.id})" class="card-custom rounded-3xl overflow-hidden cursor-pointer flex flex-col group">
+                                    <div class="relative h-56 overflow-hidden">
+                                        <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-medium">
+                                            ${post.category}
+                                        </span>
+                                    </div>
+                                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                                        <div>
+                                            <div class="flex items-center space-x-3 text-xs text-[var(--text-muted)] mb-2">
+                                                <span><i class="fa-regular fa-calendar mr-1"></i> ${post.publishedAt}</span>
+                                                <span>•</span>
+                                                <span><i class="fa-regular fa-clock mr-1"></i> ${post.readTime}</span>
+                                            </div>
+                                            <h3 class="font-bold text-xl line-clamp-2 group-hover:text-primary transition-colors">
+                                                ${post.title}
+                                            </h3>
+                                            <p class="text-[var(--text-muted)] text-sm line-clamp-3 mt-2">
+                                                ${post.excerpt}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center space-x-3 pt-4 border-t border-[var(--border-color)]">
+                                            <img src="${post.author.avatar}" alt="${post.author.name}" class="w-9 h-9 rounded-full object-cover">
+                                            <div>
+                                                <span class="block text-xs font-bold leading-none">${post.author.name}</span>
+                                                <span class="text-[10px] text-[var(--text-muted)] mt-0.5 block">${post.author.role}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+                ${renderFooter()}
+            `;
+        }
+
+        // --- CATALOG VIEW ---
+        function renderCatalogView() {
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+                        <span class="text-primary font-bold text-xs uppercase tracking-widest">Katalog Produk Resmi</span>
+                        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">Katalog Produk & Layanan Koperasi</h1>
+                        <p class="text-[var(--text-muted)] text-base">Dukung ekonomi kerakyatan dengan membeli produk berkualitas langsung dari UMKM dan petani binaan Koperasi Marunda Center.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        ${state.products.map(prod => `
+                            <div class="card-custom rounded-3xl overflow-hidden flex flex-col group">
+                                <div class="relative h-60 overflow-hidden bg-gray-100">
+                                    <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                    <span class="absolute top-4 right-4 px-3 py-1 rounded-full bg-primary text-white text-xs font-bold uppercase tracking-wider">
+                                        ${prod.category}
+                                    </span>
+                                </div>
+                                <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <h3 class="font-bold text-lg">${prod.name}</h3>
+                                        <p class="text-xs text-[var(--text-muted)] line-clamp-3 mt-1.5">${prod.description}</p>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-4 border-t border-[var(--border-color)]">
+                                        <span class="font-extrabold text-primary text-lg">Rp ${prod.price.toLocaleString('id-ID')}</span>
+                                        <button onclick="orderProduct('${prod.name}')" class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-dark transition-colors shadow-md">
+                                            Pesan Sekarang
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ${renderFooter()}
+            `;
+        }
+
+        // --- ARTICLE DETAIL VIEW ---
+        function renderPostDetailView(postId) {
+            const post = state.posts.find(p => p.id === postId) || state.posts[0];
+            const relatedPosts = state.posts.filter(p => p.id !== post.id && p.status === 'Published').slice(0, 2);
+
+            return `
+                <article class="py-16 px-4 sm:px-6 lg:px-8">
+                    <div class="article-measure space-y-8">
+                        <!-- Breadcrumb & Category -->
+                        <div class="flex items-center space-x-3 text-xs text-[var(--text-muted)]">
+                            <button onclick="router.navigate('home')" class="hover:text-primary">Beranda</button>
+                            <span>/</span>
+                            <button onclick="router.navigate('blog')" class="hover:text-primary">Artikel</button>
+                            <span>/</span>
+                            <span class="text-primary font-semibold">${post.category}</span>
+                        </div>
+
+                        <!-- Post Title -->
+                        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                            ${post.title}
+                        </h1>
+
+                        <!-- Metadata & Author Box Top -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6 border-y border-[var(--border-color)]">
+                            <div class="flex items-center space-x-4">
+                                <img src="${post.author.avatar}" alt="${post.author.name}" class="w-12 h-12 rounded-full object-cover">
+                                <div>
+                                    <h4 class="font-bold text-sm">${post.author.name}</h4>
+                                    <p class="text-xs text-[var(--text-muted)]">${post.author.role}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 text-xs text-[var(--text-muted)]">
+                                <span><i class="fa-regular fa-calendar mr-1"></i> Dipublikasikan: ${post.publishedAt}</span>
+                                <span>•</span>
+                                <span><i class="fa-regular fa-clock mr-1"></i> ${post.readTime}</span>
+                            </div>
+                        </div>
+
+                        <!-- Featured Image -->
+                        <div class="rounded-3xl overflow-hidden shadow-2xl h-[400px]">
+                            <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover">
+                        </div>
+
+                        <!-- Readable Article Content (60-75 chars per line measure) -->
+                        <div class="text-lg leading-relaxed text-[var(--text-color)] space-y-6 pt-4">
+                            ${post.content.split('\n\n').map(paragraph => `<p>${paragraph}</p>`).join('')}
+                        </div>
+
+                        <!-- Author Box Bottom -->
+                        <div class="card-custom rounded-3xl p-8 mt-12 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                            <img src="${post.author.avatar}" alt="${post.author.name}" class="w-20 h-20 rounded-full object-cover shadow-lg">
+                            <div class="text-center sm:text-left space-y-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-primary">Tentang Penulis</span>
+                                <h3 class="font-bold text-xl">${post.author.name}</h3>
+                                <p class="text-xs text-[var(--text-muted)]">${post.author.role} di Koperasi Kelurahan Marunda Center, aktif mendampingi program pemberdayaan warga dan UMKM digital.</p>
+                            </div>
+                        </div>
+
+                        <!-- Related Posts Section -->
+                        <div class="pt-16 border-t border-[var(--border-color)]">
+                            <h3 class="font-extrabold text-2xl mb-8">Artikel Terkait Lainnya</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                ${relatedPosts.map(rel => `
+                                    <div onclick="router.navigate('postDetail', ${rel.id})" class="card-custom rounded-2xl p-4 cursor-pointer group flex space-x-4">
+                                        <img src="${rel.image}" alt="${rel.title}" class="w-24 h-24 rounded-xl object-cover shrink-0">
+                                        <div class="flex flex-col justify-center">
+                                            <span class="text-[10px] text-primary font-bold uppercase">${rel.category}</span>
+                                            <h4 class="font-bold text-sm line-clamp-2 group-hover:text-primary transition-colors mt-1">${rel.title}</h4>
+                                            <span class="text-[10px] text-[var(--text-muted)] mt-2"><i class="fa-regular fa-calendar mr-1"></i> ${rel.publishedAt}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                ${renderFooter()}
+            `;
+        }
+
+        // --- ABOUT VIEW ---
+        function renderAboutView() {
+            return `
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+                    <div class="text-center space-y-4 max-w-2xl mx-auto">
+                        <span class="text-primary font-bold text-xs uppercase tracking-widest">Tentang Kami</span>
+                        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">Koperasi Kelurahan Marunda Center</h1>
+                        <p class="text-[var(--text-muted)] text-base">Wadah gotong royong ekonomi warga untuk kesejahteraan bersama di kawasan Marunda dan sekitarnya.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="card-custom rounded-3xl p-8 space-y-6">
+                            <h3 class="text-2xl font-bold">Visi & Misi</h3>
+                            <p class="text-[var(--text-muted)] text-sm leading-relaxed">
+                                Menjadi koperasi mandiri, terdepan dalam pelayanan digital, serta pusat penggerak ekonomi kerakyatan yang tangguh dan berdaya saing tinggi.
+                            </p>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-circle-check text-primary mt-1"></i>
+                                    <span>Meningkatkan kesejahteraan finansial anggota melalui unit simpan pinjam yang aman dan transparan.</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-circle-check text-primary mt-1"></i>
+                                    <span>Melakukan digitalisasi UMKM dan warung warga agar mampu bersaing di pasar modern.</span>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-circle-check text-primary mt-1"></i>
+                                    <span>Mengadakan pelatihan vokasi dan kewirausahaan berkelanjutan bagi pemuda dan ibu-ibu.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="rounded-3xl overflow-hidden shadow-2xl h-[400px]">
+                            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1000&auto=format&fit=crop&q=80" alt="Tentang Koperasi Marunda" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+                ${renderFooter()}
+            `;
+        }
+
+        // Footer Component
+        function renderFooter() {
+            return `
+                <footer class="bg-[var(--surface-color)] border-t border-[var(--border-color)] py-12 px-4 sm:px-6 lg:px-8 mt-20">
+                    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold">KM</div>
+                                <span class="font-bold text-base">Koperasi Marunda Center</span>
+                            </div>
+                            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                                Portal resmi informasi, layanan warga, dan katalog produk UMKM Koperasi Kelurahan Marunda Center.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm mb-3">Tautan Cepat</h4>
+                            <ul class="space-y-2 text-xs text-[var(--text-muted)]">
+                                <li><button onclick="router.navigate('home')" class="hover:text-primary">Beranda</button></li>
+                                <li><button onclick="router.navigate('blog')" class="hover:text-primary">Artikel & Berita</button></li>
+                                <li><button onclick="router.navigate('catalog')" class="hover:text-primary">Katalog Produk</button></li>
+                                <li><button onclick="router.navigate('about')" class="hover:text-primary">Tentang Kami</button></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm mb-3">Kategori</h4>
+                            <ul class="space-y-2 text-xs text-[var(--text-muted)]">
+                                <li><span class="cursor-pointer hover:text-primary" onclick="selectCategory('Berita Koperasi'); router.navigate('blog');">Berita Koperasi</span></li>
+                                <li><span class="cursor-pointer hover:text-primary" onclick="selectCategory('UMKM & Wirausaha'); router.navigate('blog');">UMKM & Wirausaha</span></li>
+                                <li><span class="cursor-pointer hover:text-primary" onclick="selectCategory('Pemberdayaan Warga'); router.navigate('blog');">Pemberdayaan Warga</span></li>
+                                <li><span class="cursor-pointer hover:text-primary" onclick="selectCategory('Teknologi & Digital'); router.navigate('blog');">Teknologi & Digital</span></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm mb-3">Kontak & Lokasi</h4>
+                            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                                Gedung Serbaguna Kelurahan Marunda Center, Jl. Marunda Makmur No. 1, Cilincing, Jakarta Utara.
+                            </p>
+                            <p class="text-xs text-primary font-semibold mt-2">Email: admin@koperasimarunda.id</p>
+                        </div>
+                    </div>
+                    <div class="max-w-7xl mx-auto pt-8 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--text-muted)]">
+                        <p>&copy; 2026 Koperasi Kelurahan Marunda Center. Hak Cipta Dilindungi.</p>
+                        <p class="mt-2 sm:mt-0">Ditenagai oleh Standar Web Modern & Teknologi Koperasi Digital.</p>
+                    </div>
+                </footer>
+            `;
+        }
+
+        function initThreeHero() {
+            const container = document.getElementById('webgl-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Particle Geometry
+            const particlesCount = 800;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 15;
+            }
+
+            const particlesGeo = new THREE.BufferGeometry();
+            particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMat = new THREE.PointsMaterial({
+                size: 0.04,
+                color: 0x2f00ff,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+            scene.add(particlesMesh);
+
+            camera.position.z = 5;
+
+            // Mouse interaction
+            let mouseX = 0;
+            let mouseY = 0;
+
+            window.addEventListener('mousemove', (event) => {
+                mouseX = event.clientX / window.innerWidth - 0.5;
+                mouseY = event.clientY / window.innerHeight - 0.5;
+            });
+
+            // Animation Loop
+            function animate() {
+                requestAnimationFrame(animate);
+                particlesMesh.rotation.y += 0.001 + mouseX * 0.05;
+                particlesMesh.rotation.x += 0.0005 + mouseY * 0.05;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // --- ADMIN PANEL & INTERACTION LOGIC ---
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            renderAdminPosts();
+            renderAdminProducts();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function switchAdminTab(tab) {
+            document.getElementById('adminPostsView').classList.add('hidden');
+            document.getElementById('adminProductsView').classList.add('hidden');
+            document.getElementById('adminCreatePostView').classList.add('hidden');
+            
+            document.getElementById('tabPostsBtn').className = "py-3 border-b-2 border-transparent text-[var(--text-muted)]";
+            document.getElementById('tabProductsBtn').className = "py-3 border-b-2 border-transparent text-[var(--text-muted)]";
+            document.getElementById('tabCreatePostBtn').className = "py-3 border-b-2 border-transparent text-[var(--text-muted)]";
+
+            if (tab === 'posts') {
+                document.getElementById('adminPostsView').classList.remove('hidden');
+                document.getElementById('tabPostsBtn').className = "py-3 border-b-2 border-primary text-primary font-semibold";
+            } else if (tab === 'products') {
+                document.getElementById('adminProductsView').classList.remove('hidden');
+                document.getElementById('tabProductsBtn').className = "py-3 border-b-2 border-primary text-primary font-semibold";
+            } else if (tab === 'createPost') {
+                document.getElementById('adminCreatePostView').classList.remove('hidden');
+                document.getElementById('tabCreatePostBtn').className = "py-3 border-b-2 border-primary text-primary font-semibold";
+                document.getElementById('postForm').reset();
+                document.getElementById('editPostId').value = '';
+                document.getElementById('postFormTitle').innerText = 'Tulis Artikel / Berita Baru';
+            }
+        }
+
+        function renderAdminPosts() {
+            const listEl = document.getElementById('adminPostsList');
+            listEl.innerHTML = state.posts.map(p => `
+                <div class="flex items-center justify-between p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)]">
+                    <div class="flex items-center space-x-3">
+                        <img src="${p.image}" class="w-12 h-12 rounded-lg object-cover">
+                        <div>
+                            <h5 class="font-bold text-sm line-clamp-1">${p.title}</h5>
+                            <span class="text-[10px] text-[var(--text-muted)]">${p.category} • Status: <strong class="text-primary">${p.status}</strong></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="editPost(${p.id})" class="px-3 py-1.5 rounded-lg border border-[var(--border-color)] text-xs hover:border-primary">Edit</button>
+                        <button onclick="deletePost(${p.id})" class="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-500 text-xs">Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminProducts() {
+            const listEl = document.getElementById('adminProductsList');
+            listEl.innerHTML = state.products.map(prod => `
+                <div class="flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)]">
+                    <div class="flex items-center space-x-3">
+                        <img src="${prod.image}" class="w-10 h-10 rounded-lg object-cover">
+                        <div>
+                            <h5 class="font-bold text-xs line-clamp-1">${prod.name}</h5>
+                            <span class="text-[10px] text-primary font-semibold">Rp ${prod.price.toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+                    <button onclick="deleteProduct(${prod.id})" class="text-red-500 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function handlePostSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editPostId').value;
+            const title = document.getElementById('postTitleInput').value;
+            const category = document.getElementById('postCategoryInput').value;
+            const status = document.getElementById('postStatusInput').value;
+            const image = document.getElementById('postImageInput').value;
+            const excerpt = document.getElementById('postExcerptInput').value;
+            const content = document.getElementById('postContentInput').value;
+
+            if (id) {
+                // Edit
+                const post = state.posts.find(p => p.id == id);
+                if (post) {
+                    post.title = title;
+                    post.category = category;
+                    post.status = status;
+                    post.image = image;
+                    post.excerpt = excerpt;
+                    post.content = content;
+                    post.updatedAt = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                }
+            } else {
+                // Create
+                const newPost = {
+                    id: Date.now(),
+                    title,
+                    slug: title.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+                    category,
+                    excerpt,
+                    content,
+                    author: {
+                        name: "Budi Santoso, S.E.",
+                        role: "Ketua Pengurus Koperasi",
+                        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+                    },
+                    publishedAt: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+                    updatedAt: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+                    readTime: "3 min read",
+                    image,
+                    status
+                };
+                state.posts.unshift(newPost);
+            }
+
+            switchAdminTab('posts');
+            renderAdminPosts();
+            renderView();
+        }
+
+        function editPost(id) {
+            const post = state.posts.find(p => p.id === id);
+            if (!post) return;
+            switchAdminTab('createPost');
+            document.getElementById('editPostId').value = post.id;
+            document.getElementById('postTitleInput').value = post.title;
+            document.getElementById('postCategoryInput').value = post.category;
+            document.getElementById('postStatusInput').value = post.status;
+            document.getElementById('postImageInput').value = post.image;
+            document.getElementById('postExcerptInput').value = post.excerpt;
+            document.getElementById('postContentInput').value = post.content;
+            document.getElementById('postFormTitle').innerText = 'Edit Artikel / Berita';
+        }
+
+        function deletePost(id) {
+            state.posts = state.posts.filter(p => p.id !== id);
+            renderAdminPosts();
+            renderView();
+        }
+
+        // Product Modal Functions
+        function openProductModal() {
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function handleProductSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('prodNameInput').value;
+            const price = Number(document.getElementById('prodPriceInput').value);
+            const category = document.getElementById('prodCategoryInput').value;
+            const image = document.getElementById('prodImageInput').value;
+            const description = document.getElementById('prodDescInput').value;
+
+            const newProd = {
+                id: Date.now(),
+                name,
+                price,
+                category,
+                image,
+                description
+            };
+            state.products.unshift(newProd);
+            closeProductModal();
+            renderAdminProducts();
+            renderView();
+        }
+
+        function deleteProduct(id) {
+            state.products = state.products.filter(p => p.id !== id);
+            renderAdminProducts();
+            renderView();
+        }
+
+        function orderProduct(prodName) {
+            const msg = encodeURIComponent(`Halo Koperasi Marunda Center, saya ingin memesan produk: *${prodName}*. Mohon informasi ketersediaan dan pengirimannya.`);
+            window.open(`https://wa.me/6281234567890?text=${msg}`, '_blank');
+        }
+
+        function handleSearchInput(e) {
+            state.searchQuery = e.target.value;
+            renderView();
+        }
+
+        function selectCategory(cat) {
+            state.selectedCategory = cat;
+            if (state.currentRoute !== 'blog') {
+                router.navigate('blog');
+            } else {
+                renderView();
+            }
+        }
+
+        // Initial render
+        renderView();
+    </script>
+</body>
+</html>
